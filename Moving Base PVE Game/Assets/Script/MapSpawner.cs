@@ -4,20 +4,40 @@ using UnityEngine;
 
 public class MapSpawner : MonoBehaviour
 {
-    public List<GameObject> Spawnpoints;
-    public List<GameObject> Spawning;
-    public float SpawnArea = 5;
+    public List<GameObject> LagerRockSpawnpoints;
+    public List<GameObject> LagerRockPrefab;
+    public float SpawnArea = 1000;
 
     void Start()
     {
-        foreach (GameObject p in Spawnpoints)
+        foreach (GameObject point in LagerRockSpawnpoints)
         {
-            Vector3 spawnPoint = new Vector3(Random.Range(-SpawnArea, SpawnArea), 0, Random.Range(-SpawnArea, SpawnArea));
-            Instantiate(Spawning[Random.Range(0, Spawning.Count)], p.transform.position + spawnPoint, p.transform.rotation);
+            // Random offset within SpawnArea
+            Vector3 randomOffset = new Vector3(
+                Random.Range(-SpawnArea, SpawnArea),
+                0f,
+                Random.Range(-SpawnArea, SpawnArea)
+            );
+
+            // Random rotation around the Y-axis
+            Vector3 randomRot = new Vector3(0f, Random.Range(0f, 0f), 360f);
+
+            // Choose a random prefab from the Spawning list
+            GameObject prefabToSpawn = LagerRockPrefab[Random.Range(0, LagerRockPrefab.Count)];
+
+            // Instantiate the prefab on the server
+            GameObject spawnedObject = Instantiate(
+                prefabToSpawn,
+                point.transform.position + randomOffset,
+                Quaternion.Euler(randomRot)
+            );
+
+            // Spawn the object over the network
+            Instantiate(spawnedObject);
         }
     }
 
-    // Update is called once per frame
+        // Update is called once per frame
     void Update()
     {
         
